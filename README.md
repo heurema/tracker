@@ -70,6 +70,77 @@ returning structured JSON with full issue details: number, title, state, url,
 repository.nameWithOwner, labels, assignees, createdAt, updatedAt. Pagination
 is handled automatically — all pages are merged into a single output.
 
+### /tracker:triage
+
+Generate a daily digest of GitHub Issues with grouping and hot issue highlighting.
+
+```
+/tracker:triage [--since <duration>] [--group-by repo|label|priority] [--owner <org>]
+```
+
+**Examples:**
+
+```bash
+# Default daily digest — open issues updated in last 24h, grouped by repo
+/tracker:triage
+
+# Weekly digest
+/tracker:triage --since 7d
+
+# Group by label
+/tracker:triage --group-by label
+
+# Group by priority (uses critical/high/medium/low labels)
+/tracker:triage --group-by priority
+
+# Two-week digest grouped by priority
+/tracker:triage --since 14d --group-by priority
+
+# Digest for a different org
+/tracker:triage --owner myorg --since 48h
+```
+
+**Flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--since` | `24h` | Time window for filtering by `updatedAt`. Supports: `24h`, `48h`, `7d`, `1w`, `14d`, `30d` |
+| `--group-by` | `repo` | Grouping strategy: `repo`, `label`, or `priority` |
+| `--owner` | `heurema` | GitHub org or user scope |
+
+**Grouping behavior:**
+
+- `repo` — one section per repository (e.g., `## signum`, `## forge`)
+- `label` — one section per label; issues with multiple labels appear in each matching section; unlabeled issues appear under `## (unlabeled)`
+- `priority` — sections for `critical`, `high`, `medium`, `low` based on label name matching; issues with no priority label appear under `## (no priority)`. Groups are sorted critical → high → medium → low.
+
+**Hot issue highlighting:**
+
+Each group highlights hot issues with a `**[HOT]**` marker:
+- Most commented (top 3 by comment count within the group)
+- Most recently updated (within last 6 hours)
+- Newly created within the `--since` window
+
+The digest uses the GraphQL API to fetch `comments.totalCount`, `createdAt`, and `updatedAt`
+fields for accurate hot detection.
+
+**Output format:**
+
+```
+# Tracker Triage Digest
+
+**Owner:** heurema  **Since:** 24h (2026-03-13)  **Group by:** repo  **Total:** 12 issues
+
+---
+
+## signum
+
+**4 issues** (updated since 24h)
+
+- [#42] [Fix pipeline timeout](url) — updated 2026-03-14, 7 comments **[HOT]**
+- [#39] [Add retry logic](url) — updated 2026-03-13, 2 comments
+```
+
 ### /tracker:doctor
 
 Run diagnostics to verify tracker is correctly configured.
