@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+- New `issue-context` skill: inter-plugin composition skill that resolves issue references and returns structured JSON summaries
+- Resolves `#123`, `repo#45`, and `owner/repo#45` reference formats
+- Fetches full issue details via `gh issue view` (title, state, labels, assignees, URL, timestamps, last 3 comments)
+- Search mode via `gh search issues` for free-text queries
+- Structured JSON error responses for all failure conditions
+- `issue-context` capability added to `plugin.json`
+
 ## 0.2.0
 
 - New `/tracker:triage` command: daily digest of GitHub Issues with Markdown section output

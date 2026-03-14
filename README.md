@@ -180,6 +180,68 @@ repos:
   - skillpulse
 ```
 
+## Inter-Plugin Composition
+
+### issue-context skill
+
+The `issue-context` skill enables other plugins to fetch and summarize GitHub issue context
+without implementing their own gh CLI calls. It is auto-invoked when Claude detects issue
+references or context-fetching intent — not via slash commands.
+
+**Use cases:**
+
+- Reporter plugin: check for duplicate issues before filing a new one
+- Signum plugin: attach issue context during contract generation
+- Any plugin: resolve an issue reference embedded in natural language
+
+**Issue reference formats supported:**
+
+| Format | Example | Resolution |
+|--------|---------|------------|
+| `#NNN` | `#123` | Default owner + repo context from `.local.md` |
+| `repo#NNN` | `signum#45` | Default owner + named repo |
+| `owner/repo#NNN` | `heurema/signum#45` | Fully qualified reference |
+| Free text | `"auth fails on login"` | Search across org |
+
+**Example trigger phrases:**
+
+```
+"What is the status of signum#42?"
+"Get issue context for heurema/reporter#17"
+"Look up issue #99 — is it still open?"
+"Search for issues about pipeline timeout"
+```
+
+**Output (single issue):**
+
+```json
+{
+  "type": "single",
+  "issue": {
+    "number": 42,
+    "title": "Fix pipeline timeout on large diffs",
+    "state": "open",
+    "url": "https://github.com/heurema/signum/issues/42",
+    "repository": "heurema/signum",
+    "labels": ["bug", "priority:high"],
+    "assignees": ["vi"],
+    "createdAt": "2026-03-01T10:00:00Z",
+    "updatedAt": "2026-03-14T08:30:00Z",
+    "body_excerpt": "When running signum on repos with >500 changed files...",
+    "recent_comments": [
+      {
+        "author": "vi",
+        "createdAt": "2026-03-13T15:00:00Z",
+        "body": "Reproduced with signum v4.0.2..."
+      }
+    ]
+  }
+}
+```
+
+The skill always returns JSON — never prose. All errors are returned as structured JSON
+with an `error` field and `hint` for remediation.
+
 ## Write Path
 
 Tracker is read-only. To create issues, use the Reporter plugin:
