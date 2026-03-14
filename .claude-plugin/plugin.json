@@ -1,5 +1,19 @@
 {
   "name": "tracker",
   "version": "0.1.0",
-  "description": ""
+  "description": "GitHub Issues read layer for heurema org. Cross-repo issue tracking with human-readable tables and agent-friendly JSON output.",
+  "status": "active",
+  "owner": "heurema",
+  "tags": ["github-issues", "tracker", "read", "cross-repo"],
+  "capabilities": ["github-issues", "read", "tracker"],
+  "allowed_tools": [],
+  "skill_id": "tracker:tracker",
+  "metadata": {
+    "author": "heurema",
+    "compatibility": "claude-code",
+    "homepage": "https://github.com/heurema/tracker",
+    "keywords": ["github-issues", "tracker", "read", "cross-repo"],
+    "license": "MIT",
+    "repository": "https://github.com/heurema/tracker"
+  }
 }
