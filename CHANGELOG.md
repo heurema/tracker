@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0
+
+- New `/tracker:assign` command for issue assignment workflows (first write command in tracker)
+- `--to <username>` flag: assign a GitHub user to an issue
+- `--remove <username>` flag: unassign a GitHub user from an issue
+- Confirmation step before executing any changes — no bypass flag
+- User validation via `gh api users/<username>` before assignment
+- Allowlist and owner enforcement from `.local.md` before any gh commands run
+- Current assignees displayed before confirmation prompt
+- Idempotency detection: warns when user is already assigned (--to) or not assigned (--remove)
+- `assign` capability added to `plugin.json`
+
 ## 0.3.0
 
 - New `issue-context` skill: inter-plugin composition skill that resolves issue references and returns structured JSON summaries

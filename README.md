@@ -3,8 +3,9 @@
 GitHub Issues read layer for the heurema org. Cross-repo issue tracking with
 human-readable Markdown tables and structured agent JSON output.
 
-**Read-only.** For writing issues (bug reports, feature requests), use the
-[Reporter plugin](https://github.com/heurema/reporter).
+Includes read commands for listing and triaging issues, and one write command
+(`/tracker:assign`) for issue assignment. For creating issues (bug reports, feature
+requests), use the [Reporter plugin](https://github.com/heurema/reporter).
 
 ## Installation
 
@@ -141,6 +142,74 @@ fields for accurate hot detection.
 - [#39] [Add retry logic](url) — updated 2026-03-13, 2 comments
 ```
 
+### /tracker:assign
+
+Assign or unassign a GitHub user on an issue. This is the first write command in tracker —
+all changes require explicit user confirmation before execution.
+
+```
+/tracker:assign <issue-ref> --to <username>
+/tracker:assign <issue-ref> --remove <username>
+```
+
+**Supported issue reference formats:**
+
+| Format | Example | Resolution |
+|--------|---------|------------|
+| `repo#NNN` | `signum#42` | Default owner from `.local.md` + named repo |
+| `owner/repo#NNN` | `heurema/signum#42` | Fully qualified reference |
+
+> **Note:** Bare `#NNN` is not supported for write operations. Explicit repo context
+> is required to prevent accidental mutations.
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--to <username>` | Assign the GitHub user to the issue |
+| `--remove <username>` | Unassign the GitHub user from the issue |
+
+**Examples:**
+
+```bash
+# Assign user vi to signum#42
+/tracker:assign signum#42 --to vi
+
+# Unassign user vi from signum#42
+/tracker:assign signum#42 --remove vi
+
+# Fully qualified reference
+/tracker:assign heurema/signum#42 --to vi
+```
+
+**Confirmation step:**
+
+Before executing, the command displays the current issue state and planned change:
+
+```
+Issue: heurema/signum#42 — Fix pipeline timeout
+Current assignees: @vi
+
+Planned change: Will add @newuser to heurema/signum#42
+
+Confirm? (Y/N)
+```
+
+Changes only execute after explicit `Y` confirmation. There is no `--force` or `--yes`
+bypass — the confirmation step is always required.
+
+**User validation:**
+
+Before showing the confirmation prompt, the command validates that the target username
+exists on GitHub via `gh api users/<username>`. If the user is not found, an error is
+displayed and no changes are made.
+
+**Allowlist and owner enforcement:**
+
+The target repo must be in the `repos:` list in `.local.md`. The owner from an
+`owner/repo#NNN` reference must match the `owner:` field in `.local.md`. Any mismatch
+stops execution before any gh commands run.
+
 ### /tracker:doctor
 
 Run diagnostics to verify tracker is correctly configured.
@@ -244,7 +313,10 @@ with an `error` field and `hint` for remediation.
 
 ## Write Path
 
-Tracker is read-only. To create issues, use the Reporter plugin:
+Tracker has one write command: `/tracker:assign` for issue assignment workflows.
+All other commands are read-only.
+
+To create issues, use the Reporter plugin:
 
 ```
 /report bug        # file a bug report
@@ -252,7 +324,7 @@ Tracker is read-only. To create issues, use the Reporter plugin:
 /report question   # ask a question
 ```
 
-Reporter handles `gh issue create` — tracker only reads.
+Reporter handles `gh issue create` — tracker does not create issues.
 
 ## Requirements
 
