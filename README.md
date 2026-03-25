@@ -1,11 +1,19 @@
-# tracker
+```
+   __                  __
+  / /__________ ______/ /_____  _____
+ / __/ ___/ __ `/ ___/ //_/ _ \/ ___/
+/ /_/ /  / /_/ / /__/ ,< /  __/ /
+\__/_/   \__,_/\___/_/|_|\___/_/
+```
 
-GitHub Issues read layer for the heurema org. Cross-repo issue tracking with
-human-readable Markdown tables and structured agent JSON output.
+**Cross-repo issue tracking for the heurema org.**
 
-Includes read commands for listing and triaging issues, and one write command
-(`/tracker:assign`) for issue assignment. For creating issues (bug reports, feature
-requests), use the [Reporter plugin](https://github.com/heurema/reporter).
+[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-5b21b6?style=flat-square)]()
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+> Human-readable Markdown tables and structured agent JSON output. For creating issues, use [Reporter](https://github.com/heurema/reporter).
+
+---
 
 ## Installation
 
